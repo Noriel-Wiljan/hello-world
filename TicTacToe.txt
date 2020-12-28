@@ -1,0 +1,155 @@
+package tictactoe
+
+fun outputGrid(inputXAndY: MutableList<Char>) {
+    println(
+        "---------\n" +
+                "| ${inputXAndY[0]} ${inputXAndY[1]} ${inputXAndY[2]} |\n" +
+                "| ${inputXAndY[3]} ${inputXAndY[4]} ${inputXAndY[5]} |\n" +
+                "| ${inputXAndY[6]} ${inputXAndY[7]} ${inputXAndY[8]} |\n" +
+                "---------"
+    )
+}
+
+fun isNotADigit(coordinate: String): Boolean {
+    return !coordinate.first().isDigit() || !coordinate.last().isDigit()
+}
+
+fun isNotIn1To3(coordinate: String): Boolean {
+    return coordinate.first() !in '1'..'3' || coordinate.last() !in '1'..'3'
+}
+
+fun cellIsNotEmpty(inputXAndY: MutableList<Char>, coordinate: String): Boolean {
+    return when {
+        coordinate.first() == '1' && coordinate.last() == '1' -> inputXAndY[0] != '_'
+        coordinate.first() == '1' && coordinate.last() == '2' -> inputXAndY[1] != '_'
+        coordinate.first() == '1' && coordinate.last() == '3' -> inputXAndY[2] != '_'
+        coordinate.first() == '2' && coordinate.last() == '1' -> inputXAndY[3] != '_'
+        coordinate.first() == '2' && coordinate.last() == '2' -> inputXAndY[4] != '_'
+        coordinate.first() == '2' && coordinate.last() == '3' -> inputXAndY[5] != '_'
+        coordinate.first() == '3' && coordinate.last() == '1' -> inputXAndY[6] != '_'
+        coordinate.first() == '3' && coordinate.last() == '2' -> inputXAndY[7] != '_'
+        coordinate.first() == '3' && coordinate.last() == '3' -> inputXAndY[8] != '_'
+        else -> false
+    }
+}
+
+fun movePlayer(coordinate: String, inputXAndY: MutableList<Char>, player: Char) {
+    when {
+        coordinate.first() == '1' && coordinate.last() == '1' -> inputXAndY[0] = player
+        coordinate.first() == '1' && coordinate.last() == '2' -> inputXAndY[1] = player
+        coordinate.first() == '1' && coordinate.last() == '3' -> inputXAndY[2] = player
+        coordinate.first() == '2' && coordinate.last() == '1' -> inputXAndY[3] = player
+        coordinate.first() == '2' && coordinate.last() == '2' -> inputXAndY[4] = player
+        coordinate.first() == '2' && coordinate.last() == '3' -> inputXAndY[5] = player
+        coordinate.first() == '3' && coordinate.last() == '1' -> inputXAndY[6] = player
+        coordinate.first() == '3' && coordinate.last() == '2' -> inputXAndY[7] = player
+        coordinate.first() == '3' && coordinate.last() == '3' -> inputXAndY[8] = player
+    }
+}
+
+fun playerWins(inputXAndY: MutableList<Char>, player: Char): Boolean {
+    return when {
+        (inputXAndY[0] == player).and(inputXAndY[1] == player).and(inputXAndY[2] == player)
+            .or((inputXAndY[3] == player).and(inputXAndY[4] == player).and(inputXAndY[5] == player))
+            .or((inputXAndY[6] == player).and(inputXAndY[7] == player).and(inputXAndY[8] == player))
+            .or((inputXAndY[0] == player).and(inputXAndY[3] == player).and(inputXAndY[6] == player))
+            .or((inputXAndY[1] == player).and(inputXAndY[4] == player).and(inputXAndY[7] == player))
+            .or((inputXAndY[2] == player).and(inputXAndY[5] == player).and(inputXAndY[8] == player))
+            .or((inputXAndY[0] == player).and(inputXAndY[4] == player).and(inputXAndY[8] == player))
+            .or((inputXAndY[2] == player).and(inputXAndY[4] == player).and(inputXAndY[6] == player))
+        -> true
+        else -> false
+    }
+}
+
+fun youShouldEnterNumbers() {
+    println("You should enter numbers!")
+    print("Enter cells: ")
+}
+
+fun youShouldEnter1to3() {
+    println("Coordinates should be from 1 to 3!")
+    print("Enter cells: ")
+}
+
+fun chooseEmptyCell() {
+    println("This cell is occupied! Choose another one!")
+    print("Enter cells: ")
+}
+
+fun main() {
+    val inputXAndY = "_________".toMutableList()
+    outputGrid(inputXAndY)
+
+    var coordinateX: String
+    var coordinateO: String
+
+    do {
+        var xCounter = 0
+        var oCounter = 0
+
+        for (i in inputXAndY.indices) {
+            if (inputXAndY[i] == 'X') xCounter++
+            if (inputXAndY[i] == 'O') oCounter++
+        }
+
+        print("Enter the coordinates: ")
+
+        if (xCounter <= oCounter) {
+            coordinateX = readLine()!!
+
+            while (
+                isNotADigit(coordinateX) || isNotIn1To3(coordinateX) || cellIsNotEmpty(inputXAndY, coordinateX)
+            ) {
+                when {
+                    isNotADigit(coordinateX) -> {
+                        youShouldEnterNumbers()
+                        coordinateX = readLine()!!
+                    }
+                    isNotIn1To3(coordinateX) -> {
+                        youShouldEnter1to3()
+                        coordinateX = readLine()!!
+                    }
+                    cellIsNotEmpty(inputXAndY, coordinateX) -> {
+                        chooseEmptyCell()
+                        coordinateX = readLine()!!
+                    }
+                }
+            }
+            movePlayer(coordinateX, inputXAndY, 'X')
+            outputGrid(inputXAndY)
+        } else {
+            coordinateO = readLine()!!
+
+            while (
+                isNotADigit(coordinateO) || isNotIn1To3(coordinateO) || cellIsNotEmpty(inputXAndY, coordinateO)
+            ) {
+                when {
+                    isNotADigit(coordinateO) -> {
+                        youShouldEnterNumbers()
+                        coordinateO = readLine()!!
+                    }
+                    isNotIn1To3(coordinateO) -> {
+                        youShouldEnter1to3()
+                        coordinateO = readLine()!!
+                    }
+                    cellIsNotEmpty(inputXAndY, coordinateO) -> {
+                        chooseEmptyCell()
+                        coordinateO = readLine()!!
+                    }
+                }
+            }
+            movePlayer(coordinateO, inputXAndY, 'O')
+            outputGrid(inputXAndY)
+        }
+    } while (inputXAndY.contains('_') && !playerWins(inputXAndY, 'X') && !playerWins(inputXAndY, 'O'))
+
+    println(
+        when {
+            playerWins(inputXAndY, 'X') -> "X wins"
+            playerWins(inputXAndY, 'O') -> "O wins"
+            else -> "Draw"
+        }
+    )
+}
+
